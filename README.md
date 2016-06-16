@@ -7,3 +7,6 @@ command line based ddz game
 # to build just run make
   make
   
+# or build and run
+  make run
+  
