@@ -31,8 +31,34 @@ static int comp_card_order(const void *p1, const void *p2) {
         return 0;
 }
 
-static play_type_t ParsePlane(const card *tmp_cards, int count)
+static int build_rank_map(const card *cards, int *rank_map, int count, bool sort = false)
 {
+	for (int i = 1; i < count; ++i)
+		rank_map[i] = 0;
+
+	int n = 0;
+	rank_map[0] = 1;
+	int rank = cards[0].rank;
+	for (int i = 1; i < count; ++i) {
+		if (cards[i].rank != rank) {
+			rank = cards[i].rank;
+			n++;
+		}
+		rank_map[n]++;
+	}
+	if (sort)
+		std::qsort(rank_map, n+1, sizeof rank_map[0], comp_int);
+	return n;
+}
+
+static play_type_t ParsePlane(const card *cards, int count)
+{
+	if ((count%3) != 0 || count == 0)
+		return invalidplay;
+
+	int rank_map[count];
+	int n = build_rank_map(cards, rank_map, count);
+
 	return invalidplay;
 }
 
@@ -108,20 +134,8 @@ play Game::Parse(const std::vector<card>& cards)
 	}
 
 	int rank_map[count];
-	for (int i = 1; i < count; ++i)
-		rank_map[i] = 0;
+	int n = build_rank_map(tmp_cards, rank_map, count, true);
 
-	int n = 0;
-	rank_map[0] = 1;
-	int rank = tmp_cards[0].rank;
-	for (int i = 1; i < count; ++i) {
-		if (tmp_cards[i].rank != rank) {
-			rank = tmp_cards[i].rank;
-			n++;
-		}
-		rank_map[n]++;
-	}
-	std::qsort(rank_map, n+1, sizeof rank_map[0], comp_int);
 	if (count == 5) {
 		if (rank_map[2] == 0 && rank_map[0] == 2)
 			p.type = three_with_pair;
@@ -147,8 +161,13 @@ play Game::Parse(const std::vector<card>& cards)
 		int n = rank_map[i];
 		if (n == 4) {
 			has4 = true;
+			if (!has3s && rank_map[i+1] >= 3) {
+				has3s = true;
+				++i;
+			}
 		} else if (n == 3 && !has3s) {
-			has3s = rank_map[++i] == 3;
+			has3s = rank_map[i+1] >= 3;
+			if (has3s) ++i;
 		}
 	}
 
@@ -163,7 +182,7 @@ play Game::Parse(const std::vector<card>& cards)
 		return p;
 	}
 
-	if (has3s && (count%3) == 0)
+	if (has3s)
 		p.type = ParsePlane(tmp_cards, count);
 
 	return p;
