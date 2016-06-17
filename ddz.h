@@ -79,7 +79,7 @@ struct Game {
 	std::vector<card> cards_;
 
 	play Parse(const std::vector<card>& cards);
-	bool Init(role_t role, std::vector<card> cards);
+	bool Init(role_t role, const std::vector<card>& cards);
 	static bool init_cards(card *cards, card *all_cards, const std::vector<card>& input);
 };
 

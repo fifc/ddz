@@ -22,7 +22,7 @@ play Game::Parse(const std::vector<card>& cards)
 	return p;
 }
 
-bool Game::Init(role_t role, std::vector<card> cards) {
+bool Game::Init(role_t role, const std::vector<card>& cards) {
 	role_ = role;
 	if (role == landowner) {
 		if (cards.size() != 20) {
