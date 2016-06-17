@@ -35,28 +35,30 @@ struct card {
 	}
 	int order() const
 	{
+		if (rank > 51) return rank;
 		return rank * 4 + suit - 1;
 	}
 };
 
-enum playing_type_t {
+enum play_type_t {
 	invalidplay = 0,
-	single = 1,
-	pair = 2,
-	sequence = 3,
-	pair_sequence = 4,
-	three_with_single = 5,
-	three_with_pair = 6,
-	bomb = 7,
-	four_with_two = 8,
-	four_with_two_pair = 9,
-	plane = 10,
-	plane_with_wing = 11,
-	plane_with_pair_wing = 12,
+	single,
+	pair,
+	sequence,
+	pair_sequence,
+	three_with_none,
+	three_with_single,
+	three_with_pair,
+	bomb,
+	four_with_two,
+	four_with_two_pair,
+	plane,
+	plane_with_wing,
+	plane_with_pair_wing,
 };
 
 struct play {
-	playing_type_t type = invalidplay;
+	play_type_t type = invalidplay;
 	std::vector<card> cards;
 	play() {}
 	play(const std::vector<card>& cards);

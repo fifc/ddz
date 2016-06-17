@@ -214,7 +214,8 @@ void run(int *cards, Game *game)
 			continue;
 		}
 		auto cur_cards = parse(buf, cards, role);
-		if (cur_cards.empty()) {
+		auto cur_play = game->Parse(cur_cards);
+		if (cur_play.type == invalidplay) {
 			beep();
 			continue;
 		}
