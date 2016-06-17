@@ -1,10 +1,10 @@
 # ddz
-command line based ddz game
+text interface based ddz game
 
-# build envirement requirement
-  GCC 5+, Linux. Tested with GCC 6.1 on Debian
+# build envirement requirements
+  GCC 5+, gmake, Linux. Tested with GCC 6.1 on Debian linux
 
-# to build just run make
+# to build, just run make
   make
   
 # or build and run

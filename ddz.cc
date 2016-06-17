@@ -31,6 +31,11 @@ static int comp_card_order(const void *p1, const void *p2) {
         return 0;
 }
 
+static play_type_t ParsePlane(const card *tmp_cards, int count)
+{
+	return invalidplay;
+}
+
 play Game::Parse(const std::vector<card>& cards)
 {
 	play p;
@@ -157,6 +162,9 @@ play Game::Parse(const std::vector<card>& cards)
 		}
 		return p;
 	}
+
+	if (has3s && (count%3) == 0)
+		p.type = ParsePlane(tmp_cards, count);
 
 	return p;
 }
