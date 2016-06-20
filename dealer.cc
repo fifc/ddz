@@ -9,6 +9,60 @@ static int comp_int(const void *p1, const void *p2) {
 
 }
 
+static void deal(int *cards)
+{
+	int buf[20];
+	int mode = std::rand()%6;
+	switch (mode) {
+	case 1:
+		for (int i = 0; i < 17; ++i) {
+			int tmp = cards[i];
+			cards[i] = cards[i+17];
+			cards[i+17] = tmp;
+		}
+		break;
+	case 2:
+		for (int i = 17; i < 34; ++i) {
+			int tmp = cards[i];
+			cards[i] = cards[i+20];
+			cards[i+20] = tmp;
+		}
+		break;
+	case 3:
+		for (int i = 17; i < 34; ++i) {
+			int tmp = cards[i];
+			cards[i] = cards[i+20];
+			cards[i+20] = tmp;
+		}
+		for (int i = 0; i < 17; ++i) {
+			int tmp = cards[i];
+			cards[i] = cards[i+17];
+			cards[i+17] = tmp;
+		}
+		break;
+	case 4:
+		for (int i = 0; i < 20; ++i)
+			buf[i] = cards[i];
+		for (int i = 0; i < 34; ++i)
+			cards[i] = cards[i+20];
+		for (int i = 0; i < 20; ++i)
+			cards[i+34] = buf[i];
+		break;
+	case 5:
+		for (int i = 0; i < 20; ++i)
+			buf[i] = cards[i];
+		for (int i = 0; i < 17; ++i)
+			cards[i] = cards[i+37];
+		for (int i = 17; i < 34; ++i)
+			cards[i] = cards[i+3];
+		for (int i = 0; i < 20; ++i)
+			cards[i+34] = buf[i];
+		break;
+	default:
+		break;
+	}
+}
+
 void deal_cards(int *cards)
 {
 	for (int i = 0; i < 54; ++i)
@@ -26,6 +80,7 @@ void deal_cards(int *cards)
 		}
 	}
 	cards[index] = card;
+	deal(cards);
 	std::qsort(cards, 17, sizeof (int), comp_int);
 	std::qsort(cards+17, 17, sizeof (int), comp_int);
 	std::qsort(cards+34, 20, sizeof (int), comp_int);

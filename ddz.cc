@@ -57,7 +57,7 @@ static play_type_t ParsePlane(const card *cards, int count)
 		return invalidplay;
 
 	int rank_map[count];
-	int n = build_rank_map(cards, rank_map, count);
+	build_rank_map(cards, rank_map, count);
 
 	return invalidplay;
 }
@@ -134,7 +134,7 @@ play Game::Parse(const std::vector<card>& cards)
 	}
 
 	int rank_map[count];
-	int n = build_rank_map(tmp_cards, rank_map, count, true);
+	build_rank_map(tmp_cards, rank_map, count, true);
 
 	if (count == 5) {
 		if (rank_map[2] == 0 && rank_map[0] == 2)
