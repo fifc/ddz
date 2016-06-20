@@ -9,10 +9,11 @@
 #include <cstring>
 #include <strings.h>
 #include <cstdio>
+#include <unistd.h>
 
 #include "ddz.h"
 
-void prompt(int *cards, int step, char *buf, int len);
+static bool prompt(int *cards, int step, char *buf, int len);
 
 static std::vector<std::string> split(const std::string &s, char delim = ' ') {
         std::stringstream ss(s);
@@ -195,6 +196,7 @@ static bool finished(int *cards, int role)
 	if (role == 0)
 		player = "地主";
 	std::cout << "\033c\n\n\n\t\t" << player << "赢！\n\n\n";
+	sleep(2);
 	return true;
 }
 
@@ -208,7 +210,8 @@ void run(int *cards, Game *game)
 	char buf[1024];
 	for (int j = 0; ; ) {
 		int role = j%3;
-		prompt(cards, role, buf, sizeof buf);
+		if (!prompt(cards, role, buf, sizeof buf))
+			break;
 		if (buf[0] == 0) {
 			++j;
 			continue;
@@ -300,7 +303,7 @@ static void show(int *cards, int role)
 	std::cout << msg << "\n";
 }
 
-void prompt(int *cards, int role, char *buf, int len)
+static bool prompt(int *cards, int role, char *buf, int len)
 {
 	show(cards, role);
 	const char *player = "地 主";
@@ -313,12 +316,14 @@ void prompt(int *cards, int role, char *buf, int len)
 	if (std::fgets(buf, len, stdin) == NULL)
 		if (std::feof(stdin)) {
 			std::cout << "\033c\n";
-			std::exit(0);
+			return false;
 		}
 	int slen = std::strlen(buf);
 	if (slen >= 1 && (buf[slen-1] == '\n' || buf[slen-1] == '\r'))
 		buf[slen-1] = 0;
 	if (slen >= 2 && (buf[slen-2] == '\n' || buf[slen-2] == '\r'))
 		buf[slen-2] = 0;
+
+	return true;
 }
 

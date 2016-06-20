@@ -5,6 +5,7 @@
 #include <functional>
 #include <cstdlib>
 #include <ctime>
+#include <unistd.h>
 
 #include "ddz.h"
 #include "run.h"
@@ -12,7 +13,6 @@
 
 bool Init(Game *g, int *cards)
 {
-	std::srand(std::time(0));
 	deal_cards(cards);
 	std::vector<card> card_vect;
 	card_vect.resize(20);
@@ -24,11 +24,14 @@ bool Init(Game *g, int *cards)
 
 int main(int argc, char *argv[])
 {
-	int cards[54];
-	Game game;
-	if (!Init(&game, cards)) {
-		std::cerr << "init error!\n";
+	std::srand(std::time(0));
+	for ( ; ; ) {
+		int cards[54];
+		Game game;
+		if (!Init(&game, cards)) {
+			std::cerr << "init error!\n";
+		}
+		run(cards, &game);
 	}
-	run(cards, &game);
 }
 
