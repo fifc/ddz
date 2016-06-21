@@ -46,7 +46,7 @@ static card checkout(int *cards, int count, char name)
 		rank = 5;
 	else if (name == '9')
 		rank = 6;
-	else if (name == '1')
+	else if (name == '1' || name == 'x' || name == 'X')
 		rank = 7;
 	else if (name == 'J' || name == 'j')
 		rank = 8;
@@ -213,12 +213,19 @@ void run(int *cards, Game *game)
 		if (!prompt(cards, role, buf, sizeof buf))
 			break;
 		if (buf[0] == 0) {
-			++j;
+			if (game->skip((role_t)role))
+				++j;
+			else
+				beep();
 			continue;
 		}
 		auto cur_cards = parse(buf, cards, role);
 		auto cur_play = game->Parse(cur_cards);
 		if (cur_play.type == invalidplay) {
+			beep();
+			continue;
+		}
+		if (!game->commit(cur_play, (role_t)role)) {
 			beep();
 			continue;
 		}

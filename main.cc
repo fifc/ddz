@@ -11,6 +11,28 @@
 #include "run.h"
 #include "dealer.h"
 
+void testplane()
+{
+	card cards[] = {
+		{5, heart}, {5, spade}, {5, diamond}, {5, club},
+		{9, heart}, {9, spade}, {9, diamond}, {9, club},
+	};
+	auto type = SortParsePlane(cards, sizeof cards / sizeof (card));
+	switch (type) {
+	case plane:
+		std::cout << "plane" << std::endl;
+		break;
+	case plane_with_wing:
+		std::cout << "plane_with_wing" << std::endl;
+		break;
+	case plane_with_pair_wing:
+		std::cout << "plane_with_pair_wing" << std::endl;
+		break;
+	default:
+		std::cout << "none plane type: " << type << std::endl;
+	}
+}
+
 bool Init(Game *g, int *cards)
 {
 	deal_cards(cards);
@@ -25,6 +47,7 @@ bool Init(Game *g, int *cards)
 int main(int argc, char *argv[])
 {
 	std::srand(std::time(0));
+
 	for ( ; ; ) {
 		int cards[54];
 		Game game;

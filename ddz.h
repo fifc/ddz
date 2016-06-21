@@ -25,6 +25,7 @@ struct card {
 	suit_t suit;
 
 	card(): rank(-1), suit(unknown) {}
+	card(int r, suit_t suit): rank(r), suit(suit) {}
 
 	card(int seq)
 	{
@@ -64,25 +65,34 @@ struct play {
 	play(const std::vector<card>& cards);
 };
 
-template <int N = 17>
 struct player {
 	role_t role;
-	card cards[N];
-	card all_cards[N];
+	card cards[20];
+	card all_cards[20];
 	std::list<play> history;
 	std::list<play> planning;
 };
 
+play_type_t SortParsePlane(card *cards, int count);
+
 struct Game {
 	role_t role_;
-	player<> farmer1_ = {role: farmer1};
-	player<> farmer2_ = {role: farmer2};
-	player<20> landowner_ = {role: landowner};
+	player farmer1_ = {role: farmer1};
+	player farmer2_ = {role: farmer2};
+	player landowner_ = {role: landowner};
 	std::vector<card> cards_;
 
 	play Parse(const std::vector<card>& cards);
 	bool Init(role_t role, const std::vector<card>& cards);
+	bool commit(const play& curplay, role_t role);
 	static bool init_cards(card *cards, card *all_cards, const std::vector<card>& input);
+	role_t target_role_;
+	play * target_play_ = nullptr;
+	bool skip(role_t role) {
+		if (target_play_ == nullptr)
+			return false;
+		return role != target_role_;
+	}
 };
 
 #endif // DDZ_H_INLUDED_

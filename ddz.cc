@@ -9,6 +9,41 @@
 
 #include "ddz.h"
 
+static bool operator > (const play& play1, const play play2) {
+	if (play1.type != play2.type)
+		return play1.type == bomb;
+	if (play1.cards.size() != play2.cards.size())
+		return play1.cards.size() == 2 &&
+			play1.cards[0].rank == 52 &&
+			play1.cards[1].rank == 53;
+	return play1.cards.empty() || play1.cards[0].rank > play2.cards[0].rank;
+}
+
+bool Game::commit(const play& curplay, role_t role)
+{
+	if (target_role_ == role) {
+		target_play_ = nullptr;
+	}
+	if (target_play_ != nullptr) {
+		if (!(curplay > *target_play_))
+			return false;
+	}
+	target_role_ = role;
+	player *p = nullptr;
+	if (role == landowner) {
+		p = &landowner_;
+	} else if (role == farmer1) {
+		p = &farmer1_;
+	} else {
+		p = &farmer2_;
+	}
+
+	p->history.push_back(curplay);
+	target_play_ = &p->history.back();
+
+	return true;
+}
+
 static int comp_int(const void *p1, const void *p2) {
 	if (*((int*)p1) > *((int*)p2))
 		return 1;
@@ -48,18 +83,106 @@ static int build_rank_map(const card *cards, int *rank_map, int count, bool sort
 	}
 	if (sort)
 		std::qsort(rank_map, n+1, sizeof rank_map[0], comp_int);
-	return n;
+	return n + 1;
+}
+
+static int get_rank(const card *cards, int count, int index)
+{
+	int n = 0;
+	int i = 0;
+	for ( ; i < count && n < index; ++n) {
+		int rank = cards[i++].rank;
+		for ( ; i < count && cards[i].rank == rank; )
+			++i;
+	}
+	return n == index ? cards[i].rank : -1;
 }
 
 static play_type_t ParsePlane(const card *cards, int count)
 {
-	if ((count%3) != 0 || count == 0)
+	if (((count%3) != 0 && (count%4) != 0 && (count%5) != 0) || count < 6)
 		return invalidplay;
 
 	int rank_map[count];
-	build_rank_map(cards, rank_map, count);
+	int n = build_rank_map(cards, rank_map, count);
+	int single_num = 0;
+	int pair_num = 0;
+	int triple_num = 0;
+	for (int i = 0; i < n; ++i) {
+		if (rank_map[i] == 1) {
+			single_num++;
+			if (pair_num != 0) {
+				single_num += (pair_num<<1);
+				pair_num = 0;
+			}
+			continue;
+		}
+		if (rank_map[i] == 2) {
+			if (single_num != 0)
+				single_num += 2;
+			else
+				pair_num++;
+			continue;
+		}
+		int j = i + 1;
+		int rank = get_rank(cards, count, i);
+		for ( ; j < n; ++j) {
+			if (rank_map[j] < 3 || get_rank(cards, count, j) != rank + 1)
+				break;
+			rank++;
+		}
+		if (j < i + 2) {
+			if (rank_map[i] == 3) {
+				single_num += 3;
+				if (pair_num != 0) {
+					single_num += (pair_num<<1);
+					pair_num = 0;
+				}
+			}
+			if (rank_map[i] == 4) {
+				if (single_num != 0)
+					single_num += 4;
+				else
+					pair_num += 2;
+			}
+			continue;
+		}
+
+		if (triple_num != 0)
+			return invalidplay;
+
+		for ( ; i < j; ++i) {
+			triple_num++;
+			if (rank_map[i] == 4) {
+				single_num++; 
+				if (pair_num != 0) {
+					single_num += (pair_num<<1);
+					pair_num = 0;
+				}
+			}
+		}
+		i--;
+	} 
+
+	if (triple_num >= 2) {
+std::cout << "=========== " << __LINE__ << ": t" << triple_num << "/s" << single_num << "/p" << pair_num << std::endl;
+		if (single_num == triple_num && pair_num == 0)
+			return plane_with_wing;
+		if ((pair_num<<1) == triple_num && single_num == 0)
+			return plane_with_wing;
+		if (pair_num == triple_num && single_num == 0)
+			return plane_with_pair_wing;
+		if (single_num == 0 && pair_num == 0)
+			return plane;
+	}
 
 	return invalidplay;
+}
+
+play_type_t SortParsePlane(card *cards, int count)
+{
+	std::qsort(cards, count, sizeof (card), comp_card_order);
+	return ParsePlane(cards, count);
 }
 
 play Game::Parse(const std::vector<card>& cards)
@@ -133,8 +256,9 @@ play Game::Parse(const std::vector<card>& cards)
 		return p;
 	}
 
-	int rank_map[count];
+	int rank_map[count+1];
 	build_rank_map(tmp_cards, rank_map, count, true);
+	rank_map[count] = 0;
 
 	if (count == 5) {
 		if (rank_map[2] == 0 && rank_map[0] == 2)
@@ -196,7 +320,7 @@ bool Game::Init(role_t role, const std::vector<card>& cards) {
 		}
 		return init_cards(landowner_.cards, landowner_.all_cards, cards);
 	}
-	player<> *p = nullptr;
+	player *p = nullptr;
 	if (role == farmer1)
 		p = &farmer1_;
 	if (role == farmer2)
