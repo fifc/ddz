@@ -9,26 +9,47 @@
 
 #include "ddz.h"
 
-bool ThreeGreater(const std::vector<card>& cards1, const std::vector<card>& cards2)
+static int GetThreeRank(const std::vector<card>& cards)
 {
-	int rank1 = 0;
-	for (unsigned i = 0; i < cards1.size() - 2; ++i) {
-		if (cards1[i].rank == cards1[i+1].rank && cards1[i].rank == cards1[i+2].rank) {
-			rank1 = cards1[i].rank;
+	int rank = 0;
+	for (unsigned i = 0; i < cards.size() - 2; ++i) {
+		if (cards[i].rank == cards[i+1].rank && cards[i].rank == cards[i+2].rank) {
+			rank = cards[i].rank;
 			break;
 		}
 	}
-	int rank2 = 0;
-	for (unsigned i = 0; i < cards2.size() - 2; ++i) {
-		if (cards2[i].rank == cards2[i+1].rank && cards2[i].rank == cards2[i+2].rank) {
-			rank2 = cards2[i].rank;
-			break;
-		}
-	}
+	return rank;
+}
+
+static bool ThreeGreater(const std::vector<card>& cards1, const std::vector<card>& cards2)
+{
+	int rank1 = GetThreeRank(cards1);
+	int rank2 = GetThreeRank(cards2);
 	return rank1 > rank2;
 }
 
-static bool operator > (const play& play1, const play play2) {
+static int GetPlaneRank(const std::vector<card>& cards)
+{
+	int rank = 0;
+	for (unsigned i = 0; i < cards.size() - 5; ++i) {
+		if (cards[i].rank == cards[i+1].rank && cards[i].rank == cards[i+2].rank &&
+			cards[i+3].rank == cards[i+4].rank && cards[i+3].rank == cards[i+5].rank &&
+			cards[i].rank + 1 == cards[i+3].rank) {
+			rank = cards[i].rank;
+			break;
+		}
+	}
+	return rank;
+}
+
+static bool PlaneGreater(const std::vector<card>& cards1, const std::vector<card>& cards2)
+{
+	int rank1 = GetPlaneRank(cards1);
+	int rank2 = GetPlaneRank(cards2);
+	return rank1 > rank2;
+}
+
+bool operator > (const play& play1, const play play2) {
 	if (play1.type != play2.type)
 		return play1.type == bomb;
 	if (play1.cards.size() != play2.cards.size())
@@ -36,10 +57,14 @@ static bool operator > (const play& play1, const play play2) {
 			play1.cards[0].rank == 52 &&
 			play1.cards[1].rank == 53;
 
-        if (play1.type != single && play1.type != pair && play1.type != sequence && play1.type != pair_sequence)
-		return ThreeGreater(play1.cards, play2.cards);
+        if (play1.type == single || play1.type == pair ||
+		play1.type == sequence || play1.type == pair_sequence)
+		return play1.cards.empty() || play1.cards[0].rank > play2.cards[0].rank;
+	
+	if (play1.isplane())
+		return PlaneGreater(play1.cards, play2.cards);
 
-	return play1.cards.empty() || play1.cards[0].rank > play2.cards[0].rank;
+	return ThreeGreater(play1.cards, play2.cards);
 }
 
 bool Game::commit(const play& curplay, role_t role)
@@ -188,7 +213,6 @@ static play_type_t ParsePlane(const card *cards, int count)
 	} 
 
 	if (triple_num >= 2) {
-std::cout << "=========== " << __LINE__ << ": t" << triple_num << "/s" << single_num << "/p" << pair_num << std::endl;
 		if (single_num == triple_num && pair_num == 0)
 			return plane_with_wing;
 		if ((pair_num<<1) == triple_num && single_num == 0)

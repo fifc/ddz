@@ -63,7 +63,12 @@ struct play {
 	std::vector<card> cards;
 	play() {}
 	play(const std::vector<card>& cards);
+	bool isplane() const {
+		return type == plane || type == plane_with_wing || type == plane_with_pair_wing;
+	}
 };
+
+bool operator > (const play& play1, const play play2);
 
 struct player {
 	role_t role;
