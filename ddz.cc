@@ -9,6 +9,25 @@
 
 #include "ddz.h"
 
+bool ThreeGreater(const std::vector<card>& cards1, const std::vector<card>& cards2)
+{
+	int rank1 = 0;
+	for (unsigned i = 0; i < cards1.size() - 2; ++i) {
+		if (cards1[i].rank == cards1[i+1].rank && cards1[i].rank == cards1[i+2].rank) {
+			rank1 = cards1[i].rank;
+			break;
+		}
+	}
+	int rank2 = 0;
+	for (unsigned i = 0; i < cards2.size() - 2; ++i) {
+		if (cards2[i].rank == cards2[i+1].rank && cards2[i].rank == cards2[i+2].rank) {
+			rank2 = cards2[i].rank;
+			break;
+		}
+	}
+	return rank1 > rank2;
+}
+
 static bool operator > (const play& play1, const play play2) {
 	if (play1.type != play2.type)
 		return play1.type == bomb;
@@ -16,6 +35,10 @@ static bool operator > (const play& play1, const play play2) {
 		return play1.cards.size() == 2 &&
 			play1.cards[0].rank == 52 &&
 			play1.cards[1].rank == 53;
+
+        if (play1.type != single && play1.type != pair && play1.type != sequence && play1.type != pair_sequence)
+		return ThreeGreater(play1.cards, play2.cards);
+
 	return play1.cards.empty() || play1.cards[0].rank > play2.cards[0].rank;
 }
 
