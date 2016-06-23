@@ -32,6 +32,7 @@ int main(int argc, char *argv[])
 		if (!Init(&game, cards)) {
 			std::cerr << "init error!\n";
 		}
+		assign(cards);
 		run(cards, &game);
 	}
 }

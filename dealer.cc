@@ -1,3 +1,5 @@
+#include <string.h>
+
 #include "ddz.h"
 
 static int comp_int(const void *p1, const void *p2) {
@@ -83,5 +85,23 @@ void deal_cards(int *cards)
 	deal(cards);
 	std::qsort(cards, 17, sizeof (int), comp_int);
 	std::qsort(cards+17, 17, sizeof (int), comp_int);
+	std::qsort(cards+34, 17, sizeof (int), comp_int);
+	std::qsort(cards+51, 3, sizeof (int), comp_int);
+}
+
+void assign(int *cards, int seat)
+{
+	int buf[17];
+	if (seat == 0) {
+		memmove(buf, cards, 17 * sizeof (int));
+		memmove(cards, cards + 17, 34 * sizeof (int));
+		memmove(cards + 34, buf, 17 * sizeof (int));
+	}
+	if (seat == 1) {
+		memmove(buf, cards + 34, 17 * sizeof (int));
+		memmove(cards + 17, cards, 34 * sizeof (int));
+		memmove(cards, buf, 17 * sizeof (int));
+	}
 	std::qsort(cards+34, 20, sizeof (int), comp_int);
 }
+

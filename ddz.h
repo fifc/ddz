@@ -25,14 +25,16 @@ struct card {
 	suit_t suit;
 
 	card(): rank(-1), suit(unknown) {}
-	card(int r, suit_t suit): rank(r), suit(suit) {}
+	card(int rnk, suit_t suit): rank(rnk), suit(suit) {}
 
-	card(int seq)
+	card(int order)
 	{
-		if (seq >= 52)
-			rank = seq;
-		suit = static_cast<suit_t>(((seq%4)+1));
-		rank = seq/4;
+		if (order > 51) {
+			rank = order;
+		} else {
+			suit = static_cast<suit_t>(((order%4)+1));
+			rank = order/4;
+		}
 	}
 	int order() const
 	{

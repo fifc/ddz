@@ -3,8 +3,7 @@
 
 #include <string>
 
-std::string card_name(int card);
-
 void deal_cards(int *cards);
+void assign(int *cards, int seat);
 
 #endif // DEALER

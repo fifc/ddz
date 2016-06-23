@@ -12,6 +12,7 @@
 #include <unistd.h>
 
 #include "ddz.h"
+#include "dealer.h"
 
 static bool prompt(int *cards, int step, char *buf, int len);
 
@@ -203,6 +204,11 @@ static bool finished(int *cards, int role)
 void beep()
 {
 	std::cerr << "\x07";
+}
+
+void assign(int *cards)
+{
+	assign(cards, std::rand()%3);
 }
 
 void run(int *cards, Game *game)
