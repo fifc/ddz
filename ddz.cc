@@ -51,7 +51,7 @@ static bool PlaneGreater(const std::vector<card>& cards1, const std::vector<card
 
 bool operator > (const play& play1, const play play2) {
 	if (play1.type != play2.type)
-		return play1.type == bomb;
+		return play1.type == bomb || play2.type == invalidplay;
 	if (play1.cards.size() != play2.cards.size())
 		return play1.cards.size() == 2 &&
 			play1.cards[0].rank == 52 &&

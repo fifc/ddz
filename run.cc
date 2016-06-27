@@ -208,10 +208,7 @@ void beep()
 
 void assign(int *cards)
 {
-	char buf[111];
-	prompt(cards, 0, buf, sizeof buf);
 	assign(cards, std::rand()%3);
-	prompt(cards, 0, buf, sizeof buf);
 }
 
 void run(int *cards, Game *game)
