@@ -1,5 +1,5 @@
 
-CXXFLAGS += -std=c++14 -Wall
+CXXFLAGS += -std=c++14 -O3 -Wall
 
 all: ddz
 
