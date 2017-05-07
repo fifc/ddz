@@ -253,11 +253,11 @@ static const std::string EL;
 static std::string card_name(int card)
 {
         if (card == 52)
-                return "G";
+                return " G";
         if (card == 53)
-                return "W";
+                return " W";
         if (card > 53)
-                return "xx";
+                return " E";
         int suit = card%4;
         int rank = card/4;
         //std::string suit_name[] = {"h", "s", "d", "c"};
