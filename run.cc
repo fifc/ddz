@@ -253,9 +253,9 @@ static const std::string EL;
 static std::string card_name(int card)
 {
         if (card == 52)
-                return "joker";
+                return "G";
         if (card == 53)
-                return "JOKER";
+                return "W";
         if (card > 53)
                 return "xx";
         int suit = card%4;
