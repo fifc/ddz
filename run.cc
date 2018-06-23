@@ -237,11 +237,6 @@ void run(int *cards, Game *game) {
 	}
 }
 
-static const std::string CL = "\33[0;32m";
-static const std::string EL = "\33[m";
-//static const std::string CL;
-//static const std::string EL;
-
 static std::string card_name(int card) {
         if (card > 53 || card < 0)
                 return " E";
@@ -257,10 +252,14 @@ static std::string card_name(int card) {
 		suit = card%4;
 		rank = card/4;
 	}
-        char *suit_name[] = {"♥", "♦", "♣", "♠", "🃟", "🃏"};
+#define RED "\x1b[38;2;125;0;0m"
+#define GRN "\x1b[38;2;0;125;0m"
+#define WHT "\x1b[38;2;255;255;255m"
+#define END "\x1b[39;49m"
+        std::string suit_name[] = {RED "♥" END, RED "♦" END, GRN "♣" END, GRN "♠" END, WHT "🃟" END, RED "🃏" END};
         char *rank_name[] = {" 3", " 4", " 5", " 6", " 7", " 8", " 9",
 			"10", " J", " Q", " K", " A", " 2", " G", " W"};
-        return rank_name[rank]+ CL + suit_name[suit] + EL;
+        return rank_name[rank]+ suit_name[suit];
 }
 
 static void show(int *cards, int role) {
