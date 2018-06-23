@@ -78,8 +78,8 @@ bool Game::commit(const play& curplay, role_t role)
 	}
 	target_role_ = role;
 	player *p = nullptr;
-	if (role == landowner) {
-		p = &landowner_;
+	if (role == landlord) {
+		p = &landlord_;
 	} else if (role == farmer1) {
 		p = &farmer1_;
 	} else {
@@ -361,11 +361,11 @@ play Game::Parse(const std::vector<card>& cards)
 
 bool Game::Init(role_t role, const std::vector<card>& cards) {
 	role_ = role;
-	if (role == landowner) {
+	if (role == landlord) {
 		if (cards.size() != 20) {
 			return false;
 		}
-		return init_cards(landowner_.cards, landowner_.all_cards, cards);
+		return init_cards(landlord_.cards, landlord_.all_cards, cards);
 	}
 	player *p = nullptr;
 	if (role == farmer1)

@@ -87,6 +87,9 @@ void deal_cards(int *cards)
 	std::qsort(cards+17, 17, sizeof (int), comp_int);
 	std::qsort(cards+34, 17, sizeof (int), comp_int);
 	std::qsort(cards+51, 3, sizeof (int), comp_int);
+	cards[54] = cards[51];
+	cards[55] = cards[52];
+	cards[56] = cards[53];
 }
 
 void assign(int *cards, int seat)
@@ -96,8 +99,7 @@ void assign(int *cards, int seat)
 		memmove(buf, cards, 17 * sizeof (int));
 		memmove(cards, cards + 17, 34 * sizeof (int));
 		memmove(cards + 34, buf, 17 * sizeof (int));
-	}
-	if (seat == 1) {
+	} else if (seat == 1) {
 		memmove(buf, cards + 34, 17 * sizeof (int));
 		memmove(cards + 17, cards, 34 * sizeof (int));
 		memmove(cards, buf, 17 * sizeof (int));

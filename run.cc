@@ -265,6 +265,8 @@ static std::string card_name(int card) {
 
 static void show(int *cards, int role) {
 	std::cout << "\033c\n";
+	std::cout << "\t\t\t\t" << card_name(cards[54]) << card_name(cards[55]) << card_name(cards[56]) << "\n\n";
+
 	std::string timer = "  \x1b[7m30 🕘\x1b[0m";
 	std::string msg;
 	int i = 0;

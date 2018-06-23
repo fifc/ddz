@@ -19,7 +19,7 @@ bool Init(Game *g, int *cards)
 	for (int i = 0; i < 20; ++i) {
 		card_vect[i] = card(cards[i+34]);
 	}
-	return g->Init(landowner, card_vect);
+	return g->Init(landlord, card_vect);
 }
 
 int main(int argc, char *argv[])
@@ -27,7 +27,7 @@ int main(int argc, char *argv[])
 	std::srand(std::time(0));
 
 	for ( ; ; ) {
-		int cards[54];
+		int cards[57];
 		Game game;
 		if (!Init(&game, cards)) {
 			std::cerr << "init error!\n";

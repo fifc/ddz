@@ -7,17 +7,17 @@
 #include <functional>
 
 enum role_t {
-	landowner = 0,
-	farmer1 = 1,
-	farmer2 = 2,
+	landlord = 0,
+	farmer1  = 1,
+	farmer2  = 2,
 };
 
 enum suit_t {
 	unknown = 0,
-	heart = 1,
-	spade = 2,
+	heart   = 1,
+	spade   = 2,
 	diamond = 3,
-	club  = 4,
+	club    = 4,
 };
 
 struct card {
@@ -86,7 +86,7 @@ struct Game {
 	role_t role_;
 	player farmer1_ = {role: farmer1};
 	player farmer2_ = {role: farmer2};
-	player landowner_ = {role: landowner};
+	player landlord_ = {role: landlord};
 	std::vector<card> cards_;
 
 	play Parse(const std::vector<card>& cards);
