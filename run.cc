@@ -257,7 +257,7 @@ static std::string card_name(int card) {
 #define WHT "\x1b[38;2;255;255;255m"
 #define END "\x1b[39;49m"
         std::string suit_name[] = {RED "♥" END, RED "♦" END, GRN "♣" END, GRN "♠" END, WHT "🃟" END, RED "🃏" END};
-        char *rank_name[] = {" 3", " 4", " 5", " 6", " 7", " 8", " 9",
+        const char *rank_name[] = {" 3", " 4", " 5", " 6", " 7", " 8", " 9",
 			"10", " J", " Q", " K", " A", " 2", " G", " W"};
         return rank_name[rank]+ suit_name[suit];
 }
