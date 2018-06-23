@@ -26,8 +26,7 @@ static std::vector<std::string> split(const std::string &s, char delim = ' ') {
         return elems;
 }
 
-static card checkout(int *cards, int count, char name)
-{
+static card checkout(int *cards, int count, char name) {
 	int rank = -1;
 	if (name == 'G' || name == 'g')
 		rank = 52;
@@ -83,8 +82,7 @@ static card checkout(int *cards, int count, char name)
 	return card();
 }
 
-static std::vector<card> checkout(int *cards, int count, const char *input)
-{
+static std::vector<card> checkout(int *cards, int count, const char *input) {
 	int tmp_cards[count];
 	for (int i = 0; i < count; ++i) {
 		tmp_cards[i] = cards[i];
@@ -126,8 +124,7 @@ static std::vector<card> checkout(int *cards, int count, const char *input)
 	return cur_cards;
 }
 
-static std::vector<card> parse(char *buf, int *cards, int role)
-{
+static std::vector<card> parse(char *buf, int *cards, int role) {
 	int total_card = 17;
 	int *start_card = cards;
 	if (role == 0) {
@@ -141,8 +138,7 @@ static std::vector<card> parse(char *buf, int *cards, int role)
 	return checkout(start_card, total_card, buf);
 }
 
-bool commit(int *cards, std::vector<card>& cur_cards, int role)
-{
+bool commit(int *cards, std::vector<card>& cur_cards, int role) {
 	if (cur_cards.empty())
 		return false;
 	int count = 17;
@@ -179,8 +175,7 @@ bool commit(int *cards, std::vector<card>& cur_cards, int role)
 	return true;
 }
 
-static bool finished(int *cards, int role)
-{
+static bool finished(int *cards, int role) {
 	int count = 17;
 	int *start = cards;
 	if (role == 2)
@@ -201,18 +196,15 @@ static bool finished(int *cards, int role)
 	return true;
 }
 
-void beep()
-{
+void beep() {
 	std::cerr << "\x07";
 }
 
-void assign(int *cards)
-{
+void assign(int *cards) {
 	assign(cards, std::rand()%3);
 }
 
-void run(int *cards, Game *game)
-{
+void run(int *cards, Game *game) {
 	char buf[1024];
 	for (int j = 0; ; ) {
 		int role = j%3;
@@ -245,30 +237,29 @@ void run(int *cards, Game *game)
 	}
 }
 
-//static const std::string CL = "\33[0;32m";
-//static const std::string EL = "\33[m";
-static const std::string CL;
-static const std::string EL;
+static const std::string CL = "\33[0;32m";
+static const std::string EL = "\33[m";
+//static const std::string CL;
+//static const std::string EL;
 
-static std::string card_name(int card)
-{
+static std::string card_name(int card) {
         if (card == 52)
-                return " G";
+                return " G ";
         if (card == 53)
-                return " W";
+                return " W ";
         if (card > 53)
                 return " E";
         int suit = card%4;
         int rank = card/4;
-        //std::string suit_name[] = {"h", "s", "d", "c"};
-        std::string suit_name[] = {"", "", "", ""};
-        std::string rank_name[] = {" 3", " 4", " 5", " 6", " 7", " 8", " 9", "10", " J", " Q", " K", " A", " 2"};
+        char *suit_name[] = {"♥", "♦", "♣", "♠"};
+        //char *suit_name[] = {"♡", "♢", "♧", "♤"};
+        char *rank_name[] = {" 3", " 4", " 5", " 6", " 7", " 8", " 9", "10", " J", " Q", " K", " A", " 2"};
         return  rank_name[rank]+ CL + suit_name[suit] + EL;
 }
 
-static void show(int *cards, int role)
-{
+static void show(int *cards, int role) {
 	std::cout << "\033c\n";
+	std::string timer = "  \x1b[7m30 🕘\x1b[0m";
 	std::string msg;
 	int i = 0;
 	int n = 0;
@@ -276,11 +267,11 @@ static void show(int *cards, int role)
 		int order = cards[i+34];
 		if (order != 888) {
 			++n;
-			msg += card_name(order) + " ";
+			msg += card_name(order);
 		}
 	}
 	if (role==0)
-		msg = "\t地主[" + std::to_string(n) + "] \x1b[7m" + msg + "\x1b[0m";
+		msg = timer + "\t地主[" + std::to_string(n) + "] " + msg;
 	else
 		msg = "\t地主[" + std::to_string(n) + "] " + msg;
 	std::cout << msg << "\n";
@@ -291,11 +282,11 @@ static void show(int *cards, int role)
 		int order = cards[i];
 		if (order != 888) {
 			++n;
-			msg += card_name(order) + " ";
+			msg += card_name(order);
 		}
 	}
 	if (role==1)
-		msg = "\t农民[" + std::to_string(n) + "] \x1b[7m" + msg + "\x1b[0m";
+		msg = timer + "\t农民[" + std::to_string(n) + "] " + msg;
 	else
 		msg = "\t农民[" + std::to_string(n) + "] " + msg;
 	std::cout << msg << "\n";
@@ -306,18 +297,17 @@ static void show(int *cards, int role)
 		int order = cards[i+17];
 		if (order != 888) {
 			++n;
-			msg += card_name(order) + " ";
+			msg += card_name(order);
 		}
 	}
 	if (role==2)
-		msg = "\t农民[" + std::to_string(n) + "] \x1b[7m" + msg + "\x1b[0m";
+		msg = timer + "\t农民[" + std::to_string(n) + "] " + msg;
 	else
 		msg = "\t农民[" + std::to_string(n) + "] " + msg;
 	std::cout << msg << "\n";
 }
 
-static bool prompt(int *cards, int role, char *buf, int len)
-{
+static bool prompt(int *cards, int role, char *buf, int len) {
 	show(cards, role);
 	const char *player = "地 主";
 	if (role==1)
