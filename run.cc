@@ -243,18 +243,24 @@ static const std::string EL = "\33[m";
 //static const std::string EL;
 
 static std::string card_name(int card) {
-        if (card == 52)
-                return " G ";
-        if (card == 53)
-                return " W ";
-        if (card > 53)
+        if (card > 53 || card < 0)
                 return " E";
-        int suit = card%4;
-        int rank = card/4;
-        char *suit_name[] = {"♥", "♦", "♣", "♠"};
-        //char *suit_name[] = {"♡", "♢", "♧", "♤"};
-        char *rank_name[] = {" 3", " 4", " 5", " 6", " 7", " 8", " 9", "10", " J", " Q", " K", " A", " 2"};
-        return  rank_name[rank]+ CL + suit_name[suit] + EL;
+        int suit;
+        int rank;
+        if (card == 52) {
+        	suit = 4;
+        	rank = 13;
+	} else if (card == 53) {
+        	suit = 5;
+        	rank = 14;
+	} else {
+		suit = card%4;
+		rank = card/4;
+	}
+        char *suit_name[] = {"♥", "♦", "♣", "♠", "🃟", "🃏"};
+        char *rank_name[] = {" 3", " 4", " 5", " 6", " 7", " 8", " 9",
+			"10", " J", " Q", " K", " A", " 2", " G", " W"};
+        return rank_name[rank]+ CL + suit_name[suit] + EL;
 }
 
 static void show(int *cards, int role) {
