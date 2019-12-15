@@ -204,12 +204,12 @@ void assign(int *cards) {
 	assign(cards, std::rand()%3);
 }
 
-void run(int *cards, Game *game) {
+bool run(int *cards, Game *game) {
 	char buf[1024];
 	for (int j = 0; ; ) {
 		int role = j%3;
 		if (!prompt(cards, role, buf, sizeof buf))
-			break;
+			return false;
 		if (buf[0] == 0) {
 			if (game->skip((role_t)role))
 				++j;
@@ -235,6 +235,8 @@ void run(int *cards, Game *game) {
 			beep();
 		}
 	}
+
+	return true;
 }
 
 static std::string card_name(int card) {

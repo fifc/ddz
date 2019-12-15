@@ -33,7 +33,8 @@ int main(int argc, char *argv[])
 			std::cerr << "init error!\n";
 		}
 		assign(cards);
-		run(cards, &game);
+		if (!run(cards, &game))
+			break;
 	}
 }
 
