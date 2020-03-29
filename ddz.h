@@ -84,9 +84,9 @@ play_type_t SortParsePlane(card *cards, int count);
 
 struct Game {
 	role_t role_;
-	player farmer1_ = {role: farmer1};
-	player farmer2_ = {role: farmer2};
-	player landlord_ = {role: landlord};
+	player farmer1_ = {.role=farmer1};
+	player farmer2_ = {.role=farmer2};
+	player landlord_ = {.role=landlord};
 	std::vector<card> cards_;
 
 	play Parse(const std::vector<card>& cards);
