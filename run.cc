@@ -204,12 +204,12 @@ void assign(int *cards) {
 	assign(cards, std::rand()%3);
 }
 
-bool run(int *cards, Game *game) {
+int run(int *cards, Game *game) {
 	char buf[1024];
 	for (int j = 0; ; ) {
 		int role = j%3;
 		if (!prompt(cards, role, buf, sizeof buf))
-			return false;
+			return 1;
 		if (buf[0] == 0) {
 			if (game->skip((role_t)role))
 				++j;
@@ -235,8 +235,7 @@ bool run(int *cards, Game *game) {
 			beep();
 		}
 	}
-
-	return true;
+	return 0;
 }
 
 static std::string card_name(int card) {
@@ -325,11 +324,10 @@ static bool prompt(int *cards, int role, char *buf, int len) {
 		player = "农民2";
 	std::cout << "\n\n\t" << player << "-> ";
 	buf[0] = 0;
-	if (std::fgets(buf, len, stdin) == NULL)
-		if (std::feof(stdin)) {
-			std::cout << "\033c\n";
-			return false;
-		}
+	if (std::fgets(buf, len, stdin) == NULL && std::feof(stdin)) {
+		std::cout << "\033c\n";
+		return false;
+	}
 	int slen = std::strlen(buf);
 	if (slen >= 1 && (buf[slen-1] == '\n' || buf[slen-1] == '\r'))
 		buf[slen-1] = 0;
